@@ -1,5 +1,10 @@
-import { User } from "@/app/(protected)/users/UsersTable/columns";
+import {
+  Priority,
+  Status,
+  User,
+} from "@/app/(protected)/users/UsersTable/columns";
 import { create } from "zustand";
+import { FormData } from "@/app/(protected)/users/[id]/page";
 
 type UsersStore = {
   users: User[];
@@ -7,6 +12,7 @@ type UsersStore = {
   usersAreLoading: boolean;
   usersAreFetching: boolean;
   usersInitialized: boolean;
+  updateUser: (userId: number, formData: FormData) => Promise<void>; //because of mock
 };
 
 const getRandomDate = (start: Date, end: Date): string => {
@@ -19,6 +25,9 @@ const getRandomDate = (start: Date, end: Date): string => {
 const getRandomItem = <T>(arr: T[]): T => {
   return arr[Math.floor(Math.random() * arr.length)];
 };
+
+const priorities = Object.values(Priority);
+const statuses = Object.values(Status);
 
 const getData = async (): Promise<User[]> => {
   const users: User[] = [];
@@ -39,9 +48,10 @@ const getData = async (): Promise<User[]> => {
       name: `Test User ${i}`,
       email: `test.user${i}@example.com`,
       createdAt: getRandomDate(startDate, endDate),
+      updatedAt: getRandomDate(startDate, endDate),
       company: getRandomItem(companies),
-      priority: Math.floor(Math.random() * 4), // 0–3
-      status: Math.floor(Math.random() * 3), // 0–2
+      priority: priorities[Math.floor(Math.random() * priorities.length)],
+      status: statuses[Math.floor(Math.random() * statuses.length)],
     });
   }
 
@@ -62,6 +72,46 @@ export const useUserStore = create<UsersStore>((set, get) => ({
       usersAreFetching: false,
       usersInitialized: true,
     });
+  },
+  updateUser: async (userId: number, formData: FormData) => {
+    const foundUser = get().users.find((user) => user.id === userId);
+
+    if (foundUser) {
+      foundUser.name = formData.name;
+      foundUser.email = formData.email;
+      // foundUser.company = formData.company;
+      foundUser.priority = formData.priority;
+      foundUser.status = formData.status;
+
+      const newUsers = [...get().users];
+      const index = newUsers.findIndex((user) => user.id === userId);
+      newUsers[index] = foundUser;
+
+      console.log("newUsers", newUsers);
+
+      set({ users: newUsers });
+    }
+
+    await new Promise((resolve) => setTimeout(() => resolve(true), 1500));
+
+    // return response;
+
+    // const foundUser = get().users.find((user) => user.id === userId);
+
+    // set((state) => ({
+    //   // users: state.users.map((user) =>
+    //   //   user.id === userId ? { ...user, ...formData } : user
+    //   // ),
+    //   const foundUser = state.users.find((user) => user.id === userId);
+    //   // if (foundUser) {
+    //   //   foundUser.name = formData.name;
+    //   //   foundUser.email = formData.email;
+    //   //   foundUser.company = formData.company;
+    //   //   foundUser.priority = formData.priority;
+    //   //   foundUser.status = formData.status;
+    //   // set({ users: [...state.users] });
+    //   // }
+    // }));
   },
   usersAreLoading: false,
   usersAreFetching: false,

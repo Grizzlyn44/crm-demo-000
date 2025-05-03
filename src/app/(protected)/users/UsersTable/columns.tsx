@@ -8,6 +8,7 @@ import {
   Check,
   X,
   Minus,
+  Trash,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,25 +20,41 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { FC, PropsWithChildren } from "react";
+import cn from "classnames";
+import Link from "next/link";
 
-enum Priority {
-  Neutral = 0,
-  Low = 1,
-  Medium = 2,
-  High = 3,
+export enum Priority {
+  Neutral = "Neutral",
+  Low = "Low",
+  Medium = "Medium",
+  High = "High",
 }
 
-enum Status {
-  Disabled = 0,
-  Active = 1,
-  Inactive = 2,
+export const priorityLabels = {
+  [Priority.Neutral]: "Neutral",
+  [Priority.Low]: "Low",
+  [Priority.Medium]: "Medium",
+  [Priority.High]: "High",
+};
+
+export enum Status {
+  Disabled = "Disabled",
+  Active = "Active",
+  Inactive = "Inactive",
 }
+
+export const statusLabels = {
+  [Status.Disabled]: "Disabled",
+  [Status.Active]: "Active",
+  [Status.Inactive]: "Inactive",
+};
 
 export interface User {
   id: number;
   name: string;
   email: string;
   createdAt: string;
+  updatedAt: string;
   company: string;
   priority: Priority;
   status: Status;
@@ -81,20 +98,33 @@ const SortableHeader: FC<PropsWithChildren & { column: Column<User> }> = ({
 };
 
 const PriorityLabel: FC<{ priority: Priority }> = ({ priority }) => {
-  const priorityStyles = {
-    [Priority.Neutral]:
-      "bg-neutral-100 text-neutral-800 dark:bg-neutral-900 dark:text-neutral-300",
-    [Priority.Low]:
-      "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-    [Priority.Medium]:
-      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-    [Priority.High]:
-      "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
-  };
+  // const priorityStyles = {
+  //   [Priority.Neutral]:
+  //     "bg-neutral-100 text-neutral-800 dark:bg-neutral-900 dark:text-neutral-300",
+  //   [Priority.Low]:
+  //     "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+  //   [Priority.Medium]:
+  //     "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+  //   [Priority.High]:
+  //     "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+  // };
 
   return (
     <span
-      className={`text-sm font-medium px-[.75rem] py-[.15rem] rounded-[1rem] ${priorityStyles[priority]}`}
+      // className={`text-sm font-medium px-[.75rem] py-[.15rem] rounded-[1rem] ${priorityStyles[priority]}`}
+      className={cn(
+        "text-sm font-medium px-[.75rem] py-[.15rem] rounded-[1rem]",
+        {
+          "bg-neutral-100 text-neutral-800 dark:bg-neutral-900 dark:text-neutral-300":
+            priority === Priority.Neutral,
+          "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300":
+            priority === Priority.Low,
+          "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300":
+            priority === Priority.Medium,
+          "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300":
+            priority === Priority.High,
+        }
+      )}
     >
       {Priority[priority]}
     </span>
@@ -102,7 +132,7 @@ const PriorityLabel: FC<{ priority: Priority }> = ({ priority }) => {
 };
 
 const StatusLabel: FC<{ status: Status }> = ({ status }) => {
-  const iconStyle = "h-[.5rem] w-[.5rem] text-[#fff]";
+  const iconStyle = "h-[.5rem] w-[.5rem] text-[#fff] ";
 
   const statusIcons = {
     [Status.Disabled]: <X className={iconStyle} />, //"h-4 w-4 text-red-500" />,
@@ -110,40 +140,29 @@ const StatusLabel: FC<{ status: Status }> = ({ status }) => {
     [Status.Inactive]: <Minus className={iconStyle} />, //"h-4 w-4 text-yellow-500" />,
   };
 
-  const dominantColors = {
-    [Status.Disabled]: "[#FF5659]",
-    [Status.Active]: "[#12C739]",
-    [Status.Inactive]: "gray-400",
-  };
-
-  const x = "[#FF5659]";
-
-  const iconStyles = {
-    [Status.Disabled]: `bg-${x} text-${
-      dominantColors[Status.Disabled]
-    } dark:bg-red-900 dark:text-red-300`,
-    [Status.Active]: `bg-${dominantColors[Status.Active]} text-${
-      dominantColors[Status.Active]
-    } dark:bg-green-900 dark:text-green-300`,
-    [Status.Inactive]: `bg-${dominantColors[Status.Inactive]} text-${
-      dominantColors[Status.Inactive]
-    } dark:bg-yellow-900 dark:text-yellow-300`,
-  };
-
-  const labelsStyles = {
-    [Status.Disabled]: `text-${dominantColors[Status.Disabled]}`,
-    [Status.Active]: `text-${dominantColors[Status.Active]}`,
-    [Status.Inactive]: `text-${dominantColors[Status.Inactive]}`,
-  };
-
   return (
     <span className="text-sm font-medium flex items-center gap-[.5rem]">
       <span
-        className={`w-[.75rem] h-[.75rem] rounded-[100%] flex items-center justify-center ${iconStyles[status]}`}
+        className={cn(
+          "w-[.75rem] h-[.75rem] rounded-[100%] flex items-center justify-center",
+          {
+            "bg-red-700 dark:bg-red-800": status === Status.Disabled,
+            "bg-green-600 dark:bg-green-800": status === Status.Active,
+            "bg-gray-600 dark:bg-gray-400": status === Status.Inactive,
+          }
+        )}
       >
         {statusIcons[status]}
       </span>
-      <span className={labelsStyles[status]}>{Status[status]}</span>
+      <span
+        className={cn("", {
+          "text-red-700": status === Status.Disabled,
+          "text-green-600": status === Status.Active,
+          "text-gray-600": status === Status.Inactive,
+        })}
+      >
+        {Status[status]}
+      </span>
     </span>
   );
 };
@@ -170,18 +189,31 @@ export const columns: ColumnDef<User>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              className={menuClassName}
-              onClick={() => navigator.clipboard.writeText(user.id.toString())}
+              className={`${menuClassName}`}
+              // onClick={() => navigator.clipboard.writeText(user.id.toString())}
             >
-              Copy payment ID
+              <Trash
+                // height={".5rem"}
+                // width={"auto"}
+                className="text-black fill-black h-[.75rem]! relative top-[-1px] "
+              />
+              Delete
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className={menuClassName}>
-              View customer
-            </DropdownMenuItem>
-            <DropdownMenuItem className={menuClassName}>
+            <Link href={`/users/${user.id}`}>
+              <DropdownMenuItem
+                className={menuClassName} /*onClick={() => {
+              // router.push(`/users/${user.id}`);
+              // router.push(`/users/${user.id}`, undefined, { shallow: true });
+              // router.push(`/users/${user.id}`, { shallow: true });
+            }}*/
+              >
+                View User
+              </DropdownMenuItem>
+            </Link>
+            {/* <DropdownMenuItem className={menuClassName}>
               View payment details
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -196,10 +228,25 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "name",
     header: "Name",
+    cell: ({ getValue, row }) => {
+      const email = getValue() as string;
+      return (
+        <Link
+          href={`/users/${row.original.id}`}
+          className="text-primary font-[500]"
+        >
+          {email}
+        </Link>
+      );
+    },
   },
   {
     accessorKey: "email",
     header: "Email",
+    cell: ({ getValue, row }) => {
+      const email = getValue() as string;
+      return <Link href={`/users/${row.original.id}`}>{email}</Link>;
+    },
   },
   {
     accessorKey: "createdAt",
@@ -221,11 +268,6 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ getValue }) => {
       const priority = getValue() as Priority;
       return <PriorityLabel priority={priority} />;
-      // return (
-      //   <span className="text-sm font-medium text-gray-900 dark:text-gray-300">
-      //     {Priority[priority]}
-      //   </span>
-      // );
     },
   },
   {
@@ -236,11 +278,6 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ getValue }) => {
       const status = getValue() as Status;
       return <StatusLabel status={status} />;
-      // return (
-      //   <span className="text-sm font-medium text-gray-900 dark:text-gray-300">
-      //     {Status[status]}
-      //   </span>
-      // );
     },
   },
 ];

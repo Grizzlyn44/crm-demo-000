@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { RefreshCw, Filter, Plus } from "lucide-react";
 import cn from "classnames";
 
-const Dashboard = () => {
+const Users = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const usersStore = useUserStore();
@@ -24,7 +24,8 @@ const Dashboard = () => {
   }, []);
 
   const buttonIconClassName = cn("", {
-    "animate-spin [animation-duration:2s]": usersStore.usersAreLoading,
+    "animate-spin [animation-duration:2s]":
+      usersStore.usersAreLoading || usersStore.usersAreFetching,
   });
 
   return (
@@ -49,7 +50,7 @@ const Dashboard = () => {
           </Button>
 
           <Button
-            disabled={usersStore.usersAreLoading}
+            disabled={usersStore.usersAreLoading || usersStore.usersAreFetching}
             onClick={() => usersStore.fetchUsers()}
           >
             <RefreshCw className={buttonIconClassName} />
@@ -62,13 +63,13 @@ const Dashboard = () => {
           columns={columns}
           data={usersStore.users}
           scrollable
-          isLoading={usersStore.usersAreLoading || isLoading}
+          isLoading={usersStore.usersAreLoading || !usersStore.usersInitialized}
         />
       </div>
     </div>
   );
 };
 
-export default Dashboard;
+export default Users;
 
 // sticky top-[0] z-1

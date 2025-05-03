@@ -33,7 +33,7 @@ const RootLayout = ({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${roboto.variable} antialiased`}
       >
-        <main className="bg-[purple]">{children}</main>
+        <main className="">{children}</main>
       </body>
     </html>
   );

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Roboto } from "next/font/google";
 import "../globals.css";
 import Menu from "@/components/Menu/Menu";
 import Header from "@/components/Menu/Header";
+import { Toaster } from "@/components/ui/sonner";
 // import cn from "classnames";
 
 const geistSans = Geist({
@@ -55,6 +56,7 @@ const RootLayout = ({
                   {children}
                 </div>
               </main>
+              <Toaster />
             </div>
           </section>
         </div>

@@ -89,7 +89,7 @@ const Menu = () => {
       const { id, name, icon, href, isActionMenu } = navItem;
 
       const firstActionMenuItem = navItems.find((item) => item.isActionMenu); //@TODO: ugly but OK atm
-      const isActive = pathname === href;
+      const isActive = pathname.startsWith(href);
       const linkClassName = cn(
         "flex items-center gap-[1.5rem] py-[1.15rem] pl-[1.25rem] pr-[2rem] text-[#929292] hover:bg-[#CCE9EB] border-r-[5px] border-r-[transparent] [transition:all_.05s_ease-in-out] hover:[transition:all_.0s_ease-in-out] text-[1rem]", //hover:border-r-[#3FC1C0]
         {
@@ -117,10 +117,12 @@ const Menu = () => {
   return (
     <aside className="bg-[#fff] flex-[0_1_auto] py-[2rem]">
       <div className="menu flex flex-col h-full">
-        <div className="flex gap-[1.5rem] px-[1.25rem] mb-[2rem] items-center">
-          <div className="w-[2rem] h-[2rem] rounded-[100%] bg-[#434969]" />
-          <div className="text-[#020202] font-[600] text-[1rem]">CRM</div>
-        </div>
+        <Link href="/">
+          <div className="flex gap-[1.5rem] px-[1.25rem] mb-[2rem] items-center">
+            <div className="w-[2rem] h-[2rem] rounded-[100%] bg-[#434969]" />
+            <div className="text-[#020202] font-[600] text-[1rem]">CRM</div>
+          </div>
+        </Link>
         <ul className="flex flex-col h-full">{renderMenuItems()}</ul>
       </div>
     </aside>

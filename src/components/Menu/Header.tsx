@@ -33,7 +33,7 @@ const Header = () => {
             // width={1920}
             // height={1080}
           /> */}
-          <span className="text-[.75rem] font-[500]">Taylor Swift</span>
+          <span className="text-[.75rem] font-[500]">Demo User</span>
         </div>
       </div>
     </header>
